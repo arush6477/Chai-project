@@ -2,3 +2,5 @@
 ---> we are making a very complex application professionally and it is production grade as well
 credits -> Hitesh Choudhary
 
+link to the data model made in eraser.io
+https://app.eraser.io/workspace/bE3ZRQXYGE1ao2hqaxvx
