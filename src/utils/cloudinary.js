@@ -22,3 +22,5 @@ const uploadOnCloudinary = async (localFilePath) =>{
         //remove the locally saved temporary as upload is failed 
     }
 }
+
+export default uploadOnCloudinary;
