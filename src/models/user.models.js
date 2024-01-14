@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
         lowercase : true,
         trim : true
     },
-    fullname : {
+    fullName : {
         type : String,
         required : true,
         trim : true,
@@ -31,10 +31,12 @@ const userSchema = new mongoose.Schema({
     coverImage : {
         type : String
     },
-    watchHostory : {
-        type : mongoose.Schema.Types.ObjectId,
-        ref : "Video"
-    },
+    watchHistory: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Video"
+        }
+    ],
     password : {
         type : String,
         required : [true , "Password is required"]
@@ -63,7 +65,7 @@ userSchema.methods.generateAccessToken = async function(){
             _id : this._id,
             email : this.email,
             username : this.username,
-            fullName : this.fullname            
+            fullName : this.fullName            
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
