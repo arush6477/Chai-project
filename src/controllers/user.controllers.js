@@ -2,7 +2,7 @@ import {asyncHandler} from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 //importing user as it can directly access the database through mongoose and will help out a lot
 import {User} from "../models/user.models.js";
-import uploadOnCloudinary from "../utils/cloudinary.js";
+import {uploadOnCloudinary} from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js"
 import jwt from "jsonwebtoken";
 
@@ -209,7 +209,7 @@ const changeCurrentPassword = asyncHandler(async(req,res) =>{
 const getCurrentUser = asyncHandler(async (req,res)=>{
     return res
     .status(200)
-    .json(new ApiResponse(200 , req.user , "current user fetched successfully"))
+    .json(new ApiResponse(200 , req.user , "current user fetched successfully"));
 })
 
 const updateAccountDetails = asyncHandler(async (req,res)=>{
@@ -217,7 +217,7 @@ const updateAccountDetails = asyncHandler(async (req,res)=>{
 
     if(!fullName || !email) throw new ApiError(400 , "All fields are required");
 
-    User.findByIdAndUpdate(
+    const updated = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set : {
@@ -228,9 +228,11 @@ const updateAccountDetails = asyncHandler(async (req,res)=>{
         {new : true}
     ).select("-password");
 
+    if(!updated) throw new ApiError(200 , "failed to update the details in the database");
+
     return res
     .status(200)
-    .json(new ApiResponse(200 , user , "Account details updated successfully"));
+    .json(new ApiResponse(200 , updated , "Account details updated successfully"));
 }) 
 
 const updateUserAvatar = asyncHandler(async (req,res)=>{
@@ -286,6 +288,23 @@ const updateUserCoverImage = asyncHandler(async(req,res)=>{
     
 })
 
+const updateUsername = asyncHandler(async(req,res)=>{
+    const {username} = req.body;
+
+    if(!username) throw new ApiError(400 , "Username is required");
+
+    const alreadyExists = await User.findOne({username});
+    if(alreadyExists) throw new ApiError(400 , "Username already exists");
+
+    const user = await User.findByIdAndUpdate(req.user?._id , {username : username});
+    
+
+    if(!user) throw new ApiError(500 , "Failed to update the username in the database")
+    return res 
+    .status(200)
+    .json(new ApiResponse(200 , {} , "username Updated Successfully"))
+
+})
 export {
     registerUser,
     loginUser,
@@ -295,5 +314,6 @@ export {
     getCurrentUser,
     updateAccountDetails,
     updateUserAvatar,
-    updateUserCoverImage
+    updateUserCoverImage,
+    updateUsername
 }
