@@ -159,7 +159,7 @@ const logoutUser = asyncHandler(async(req,res) =>{
     .json(new ApiResponse(200 , {} , "User logged Out")); 
 })
 
-const renewAccessToken = asynchandler(async (req,res)=> {
+const renewAccessToken = asyncHandler(async (req,res)=> {
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
     if(!incomingRefreshToken) throw new ApiError(401 , "unauthorized request");
 
@@ -191,7 +191,10 @@ const renewAccessToken = asynchandler(async (req,res)=> {
 const changeCurrentPassword = asyncHandler(async(req,res) =>{
     const {oldPassword , newPassword} = req.body;
 
-    const user = await User(req.user?._id);
+    
+    const user = await User.findById(req.user?._id);
+    if(!user) throw new ApiError(400,"User id not found");
+    
     const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
     if(!isPasswordCorrect) throw new ApiError(400 , "Invalid Password");
 
@@ -203,7 +206,7 @@ const changeCurrentPassword = asyncHandler(async(req,res) =>{
     .json(new ApiResponse(200 , {} , "Password changed successfully"));
 })
 
-const getCurentUser = asyncHandler(async (req,res)=>{
+const getCurrentUser = asyncHandler(async (req,res)=>{
     return res
     .status(200)
     .json(new ApiResponse(200 , req.user , "current user fetched successfully"))
@@ -289,7 +292,7 @@ export {
     logoutUser,
     renewAccessToken,
     changeCurrentPassword,
-    getCurentUser,
+    getCurrentUser,
     updateAccountDetails,
     updateUserAvatar,
     updateUserCoverImage

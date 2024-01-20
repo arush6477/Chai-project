@@ -46,7 +46,7 @@ const userSchema = new mongoose.Schema({
     }
 },{timestamps : true});
 
-// hook that isused to perform a specific task just before the data is going to be added
+// hook that is used to perform a specific task just before the data is going to be added
 userSchema.pre("save" , async function (next) {
     if(!this.isModified("password")){
         return next();
