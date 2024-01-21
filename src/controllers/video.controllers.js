@@ -11,7 +11,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
     try {
         const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
         //TODO: get all videos based on query, sort, pagination
-        console.log(req);
+        // sort query etc things remaining
     
         // search for videos with the same owner
         const video = await Video.find({
@@ -119,7 +119,13 @@ const deleteVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
     if(!videoId) throw new ApiError(400 , "Video Id not found");
 
-    const videoDelete = await Video.deleteOne(videoId);
+    const video = await Video.findById(videoId);
+    if(!video) throw new ApiError(400 , "Failed to fetch video data from database ");
+    
+    await deleteCloudinary(video.videoFile); 
+    await deleteCloudinary(video.thumbnail);
+
+    const videoDelete = await Video.deleteOne({_id : videoId});
 
     if(!videoDelete) throw new ApiError(500 , "Failed to delete he video");
 
@@ -129,7 +135,15 @@ const deleteVideo = asyncHandler(async (req, res) => {
 })
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
-    const { videoId } = req.params
+    try {
+        const { videoId } = req.params;
+        const toggle = await Video.findOneAndUpdate({ _id: videoId }, [
+          { $set: { isPublished: { $not: "$isPublished" } } },
+        ]);
+        return res.status(200).json(new ApiResponse(200, { toggle }, "Updated"));
+      } catch (error) {
+        throw new ApiError(400, error.message || "Unable to get the status of the video");
+      }
 })
 
 export {
