@@ -42,7 +42,7 @@ router
   .patch(verifyJWT, upload.single("avatar"), updateUserAvatar);
 router
   .route("/update-cover")
-  .patch(verifyJWT, upload.single("cover"), updateUserCoverImage);
+  .patch(verifyJWT, upload.single("coverImage"), updateUserCoverImage);
 router.route("/update-username").patch(verifyJWT,updateUsername);
 // router.route("/c/:username").get(verifyJWT, getUserChanelProfile); //getting data from params
 // router.route("/history").get(verifyJWT, watchHistory);

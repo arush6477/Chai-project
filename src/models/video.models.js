@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
-import bcrypt from "bcrypt";
 
 const videoSchema = new mongoose.Schema({
     videoFile :{
