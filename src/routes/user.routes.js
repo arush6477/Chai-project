@@ -8,7 +8,9 @@ import {loginUser,
     updateAccountDetails,
     updateUserAvatar,
     updateUserCoverImage,
-    updateUsername} from "../controllers/user.controllers.js" 
+    updateUsername,
+    getWatchHistory,
+    getUserChannelProfile} from "../controllers/user.controllers.js" 
 import {upload} from "../middlewares/multer.middlewares.js"
 import { verifyJWT } from "../middlewares/auth.middlewares.js";
 
@@ -44,8 +46,8 @@ router
   .route("/update-cover")
   .patch(verifyJWT, upload.single("coverImage"), updateUserCoverImage);
 router.route("/update-username").patch(verifyJWT,updateUsername);
-// router.route("/c/:username").get(verifyJWT, getUserChanelProfile); //getting data from params
-// router.route("/history").get(verifyJWT, watchHistory);
+router.route("/c/:username").get(verifyJWT, getUserChannelProfile); 
+router.route("/history").get(verifyJWT, getWatchHistory);
 
 
 export default router;
